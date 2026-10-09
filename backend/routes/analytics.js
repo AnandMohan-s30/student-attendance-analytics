@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const c = require('../controllers/analytics');
+router.get('/overview', c.overview);
+router.get('/distribution', c.distribution);
+router.get('/top-bottom', c.topBottom);
+router.get('/subject-overview', c.subjectOverview);
+router.get('/monthly', c.monthly);
+router.get('/defaulters', c.defaulters);
+router.get('/student/:id', c.studentAnalytics);
+router.get('/subject/:id', c.subjectAnalytics);
+module.exports = router;

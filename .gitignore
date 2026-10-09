@@ -1,0 +1,37 @@
+﻿# Dependencies
+node_modules/
+
+# Environment files -- never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Coverage
+coverage/
+
+# Python virtualenv (not part of the JS project)
+venv/
+__pycache__/
+*.pyc
+*.pyo
