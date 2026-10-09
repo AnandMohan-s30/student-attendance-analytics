@@ -1,66 +1,104 @@
-# Student Attendance Analytics
+<h1 align="center">🎓 Student Attendance Analytics</h1>
 
-A full-stack college attendance analytics system with JWT-based authentication, built with React, Node.js, Express, and MySQL.
+<p align="center">
+  A full-stack college attendance analytics system with JWT-based authentication, built with React, Node.js, Express, and MySQL.
+</p>
 
-## Features
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-Styling-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
+</p>
 
-- **Login page** – secure email/password authentication with show/hide toggle and loading state
-- Dashboard with KPI cards, charts, and defaulter list
-- Student management (CRUD with search)
-- Subject management (CRUD with search)
-- Attendance marking with bulk Present/Absent
-- Attendance history with filters
-- Analytics with distribution charts, ranking, monthly trends
-- Student detail page with subject-wise breakdown
-- Defaulter detection (below 75%)
-- Logout with session-clear
+---
 
-## Technology Stack
+## 📌 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [Environment Variables](#-environment-variables)
+- [Demo Account](#-demo-account)
+- [API Overview](#-api-overview)
+- [Authentication](#-authentication)
+
+---
+
+## ✨ Features
+
+| Module | Description |
+|--------|-------------|
+| 🔐 **Login** | Secure email/password auth with show/hide toggle and loading state |
+| 📊 **Dashboard** | KPI cards, attendance charts, and defaulter list at a glance |
+| 👨‍🎓 **Students** | Full CRUD with search — create, edit, delete students |
+| 📚 **Subjects** | Full CRUD with search — manage subjects and faculty |
+| ✅ **Attendance** | Bulk mark Present/Absent per subject per day |
+| 🗂️ **History** | Filter attendance records by date, subject, or student |
+| 📈 **Analytics** | Distribution charts, rankings, monthly trends, subject-wise breakdown |
+| 🔍 **Student Detail** | Per-student subject-wise attendance breakdown |
+| ⚠️ **Defaulters** | Auto-detect students below 75% attendance threshold |
+| 🚪 **Logout** | Secure session clear via HttpOnly cookie |
+
+---
+
+## 🛠 Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, Vite, Tailwind CSS, Recharts, Axios, React Router |
-| Backend | Node.js, Express.js, bcrypt, jsonwebtoken |
-| Database | MySQL |
+|-------|------------|
+| **Frontend** | React 18, Vite, Tailwind CSS, Recharts, Axios, React Router v6 |
+| **Backend** | Node.js, Express.js, bcrypt, jsonwebtoken, cookie-parser |
+| **Database** | MySQL (mysql2/promise connection pool) |
+| **Auth** | JWT stored in HttpOnly SameSite cookie (8h expiry) |
+| **Dev Tools** | nodemon, dotenv |
 
-## Project Structure
+---
+
+## 📁 Project Structure
 
 ```
 student-attendance-analytics/
-├── frontend/               React + Vite app
+├── frontend/                   React + Vite app
+│   ├── index.html
 │   └── src/
-│       ├── context/        AuthContext (JWT session management)
-│       ├── components/     Sidebar (with logout), PrivateRoute, …
-│       ├── pages/          Login, Dashboard, Students, …
-│       └── services/       api.js (axios, withCredentials)
-├── backend/                Express REST API
-│   ├── controllers/        auth.js, students.js, …
-│   ├── middleware/         auth.js (JWT cookie verification)
-│   ├── routes/             auth.js, students.js, …
-│   ├── scripts/            seed-admin.js
-│   ├── db/                 pool.js (MySQL connection)
-│   └── .env.example        Required environment variables
+│       ├── context/            AuthContext — JWT session management
+│       ├── components/         Sidebar, Header, KpiCard, PrivateRoute, …
+│       ├── pages/              Login, Dashboard, Students, Subjects,
+│       │                       Attendance, Analytics, StudentDetails
+│       ├── services/           api.js — axios instance (withCredentials)
+│       └── utils/              attendance.js — shared helpers
+├── backend/                    Express REST API
+│   ├── server.js               Entry point
+│   ├── controllers/            analytics, attendance, auth, students, subjects
+│   ├── middleware/             auth.js — JWT cookie verification
+│   ├── routes/                 auth, students, subjects, attendance, analytics
+│   ├── scripts/                seed-admin.js
+│   ├── db/                     pool.js — MySQL connection pool
+│   └── .env.example            Required environment variables (template)
 └── database/
-    ├── schema.sql          Core tables + sample data
-    └── migrate_users.sql   Adds users table (run once)
+    ├── schema.sql              Core tables + 20 students + sample attendance
+    └── migrate_users.sql       Adds users table (run once on existing DB)
 ```
 
-## Authentication
+---
 
-- Passwords hashed with **bcrypt** (cost 12) — never stored in plain text
-- Sessions use a **signed JWT stored in an HttpOnly `lax` SameSite cookie** (8 h expiry)
-- All `/api/*` routes (except `/api/auth/login`) require a valid cookie
-- Frontend redirects to `/login` on 401; `PrivateRoute` guards all pages
+## 🚀 Quick Start
 
-## Quick Start
+### Prerequisites
+
+- Node.js ≥ 18
+- MySQL ≥ 8
+- npm
 
 ### 1. Database
 
 ```bash
-# Create tables and sample data
+# Create tables and load sample data
 mysql -u root -p < database/schema.sql
 
-# Add the users table (safe to re-run)
+# Add the users table (safe to re-run on existing DB)
 mysql -u root -p student_attendance_db < database/migrate_users.sql
 ```
 
@@ -68,103 +106,138 @@ mysql -u root -p student_attendance_db < database/migrate_users.sql
 
 ```bash
 cd backend
-cp .env.example .env          # then edit .env with your values
+cp .env.example .env        # fill in your DB password and JWT secret
 npm install
-npm run seed                  # creates the demo admin account
-npm run dev
+npm run seed                # creates the demo admin account
+npm run dev                 # starts on http://localhost:5000
 ```
-
-Backend runs on `http://localhost:5000`
 
 ### 3. Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev                 # starts on http://localhost:5173
 ```
 
-Frontend runs on `http://localhost:5173` and proxies `/api` to port 5000.
+> The Vite dev server proxies all `/api` requests to `http://localhost:5000` automatically.
 
-## Environment Variables
+---
 
-Copy `backend/.env.example` to `backend/.env` and fill in your values:
+## ⚙️ Environment Variables
 
-```
+Copy `backend/.env.example` → `backend/.env` and fill in your values:
+
+```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=student_attendance_db
 PORT=5000
+
+# Must match your Vite dev server origin
 FRONTEND_ORIGIN=http://localhost:5173
 
-# Generate with:
+# Generate a strong secret:
 # node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 JWT_SECRET=replace_with_a_long_random_secret
 
-# Used only by:  npm run seed
+# Used only by: npm run seed
 SEED_ADMIN_NAME=Admin
 SEED_ADMIN_EMAIL=admin@college.edu
 SEED_ADMIN_PASSWORD=Admin@1234
 ```
 
-> **Never commit `.env` to source control.** It is listed in `.gitignore`.
+> ⚠️ **Never commit `.env` to source control.** It is in `.gitignore`.
 
-## Demo Account
+---
 
-| Field | Default |
-|-------|---------|
+## 🔐 Authentication
+
+- Passwords hashed with **bcrypt** (cost factor 12) — never stored in plain text
+- Sessions use a **signed JWT in an HttpOnly `SameSite=lax` cookie** (8 h expiry)
+- All `/api/*` routes except `POST /api/auth/login` require a valid cookie
+- Frontend auto-redirects to `/login` on any 401; `<PrivateRoute>` guards all pages
+- Stale cookies are cleared automatically on verification failure
+
+---
+
+## 🧪 Demo Account
+
+| Field | Value |
+|-------|-------|
 | Email | `admin@college.edu` |
 | Password | `Admin@1234` |
 
-To change the password: update `SEED_ADMIN_PASSWORD` in `.env` and re-run `npm run seed`.
+To rotate the password: update `SEED_ADMIN_PASSWORD` in `.env` and re-run `npm run seed`.
 
-## API Overview
+---
+
+## 📡 API Overview
 
 All endpoints except `POST /api/auth/login` require the JWT cookie (set automatically after login).
 
-### Auth
+<details>
+<summary><strong>Auth</strong></summary>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | /api/auth/login | Login – sets HttpOnly JWT cookie |
-| POST | /api/auth/logout | Logout – clears cookie |
-| GET | /api/auth/me | Validate session / return current user |
+| `POST` | `/api/auth/login` | Login — sets HttpOnly JWT cookie |
+| `POST` | `/api/auth/logout` | Logout — clears cookie |
+| `GET` | `/api/auth/me` | Validate session / return current user |
 
-### Students
+</details>
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/students | List students with attendance % |
-| POST | /api/students | Create student |
-| PUT | /api/students/:id | Update student |
-| DELETE | /api/students/:id | Delete student |
-
-### Subjects
+<details>
+<summary><strong>Students</strong></summary>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /api/subjects | List subjects |
-| POST | /api/subjects | Create subject |
-| PUT | /api/subjects/:id | Update subject |
-| DELETE | /api/subjects/:id | Delete subject |
+| `GET` | `/api/students` | List all students with attendance % |
+| `POST` | `/api/students` | Create a student |
+| `PUT` | `/api/students/:id` | Update a student |
+| `DELETE` | `/api/students/:id` | Delete a student |
 
-### Attendance
+</details>
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/attendance | List (filterable by date/subject/student) |
-| POST | /api/attendance | Save attendance (array, upsert) |
-
-### Analytics
+<details>
+<summary><strong>Subjects</strong></summary>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /api/analytics/overview | KPI counts |
-| GET | /api/analytics/distribution | Attendance tier counts |
-| GET | /api/analytics/top-bottom | Top 5 and bottom 5 students |
-| GET | /api/analytics/subject-overview | Per-subject averages |
-| GET | /api/analytics/monthly | Monthly trend |
-| GET | /api/analytics/defaulters | Students below 75% |
-| GET | /api/analytics/student/:id | Full student analytics |
-| GET | /api/analytics/subject/:id | Full subject analytics |
+| `GET` | `/api/subjects` | List all subjects |
+| `POST` | `/api/subjects` | Create a subject |
+| `PUT` | `/api/subjects/:id` | Update a subject |
+| `DELETE` | `/api/subjects/:id` | Delete a subject |
+
+</details>
+
+<details>
+<summary><strong>Attendance</strong></summary>
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/attendance` | List records (filter by date / subject / student) |
+| `POST` | `/api/attendance` | Save attendance batch (upsert) |
+
+</details>
+
+<details>
+<summary><strong>Analytics</strong></summary>
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/analytics/overview` | KPI counts |
+| `GET` | `/api/analytics/distribution` | Attendance tier counts |
+| `GET` | `/api/analytics/top-bottom` | Top 5 and bottom 5 students |
+| `GET` | `/api/analytics/subject-overview` | Per-subject averages |
+| `GET` | `/api/analytics/monthly` | Monthly attendance trend |
+| `GET` | `/api/analytics/defaulters` | Students below 75% |
+| `GET` | `/api/analytics/student/:id` | Full analytics for one student |
+| `GET` | `/api/analytics/subject/:id` | Full analytics for one subject |
+
+</details>
+
+---
+
+<p align="center">Made with ❤️ by <a href="https://github.com/AnandMohan-s30">AnandMohan-s30</a></p>
