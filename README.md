@@ -14,8 +14,35 @@
 
 ---
 
+## 📖 About
+
+**Student Attendance Analytics** is a production-ready, full-stack attendance management platform designed for colleges and universities. It replaces manual attendance registers with a fast, searchable, and visually rich web application that gives faculty and administrators real-time insight into student attendance patterns.
+
+The system was built with a clean separation of concerns — a React 18 single-page application on the frontend communicates with a stateless Express REST API on the backend, which in turn reads and writes to a MySQL 8 relational database. Authentication is handled entirely through HttpOnly JWT cookies, meaning no tokens are ever exposed to JavaScript, protecting against XSS attacks by design.
+
+### Why it was built
+
+Tracking attendance manually is error-prone and slow. Generating reports from spreadsheets takes hours. This application solves both problems: attendance is marked in bulk in seconds, and every chart, ranking, and defaulter report is computed in real time from the database — no manual aggregation needed.
+
+### What makes it complete
+
+Most attendance tools only cover marking. This one goes further:
+
+- **Dashboard** gives an instant college-wide health check — total students, total subjects, sessions conducted, and a defaulter count, all on one screen alongside bar and pie charts.
+- **Analytics engine** produces five distinct views: attendance distribution by tier (Excellent / Good / Warning / Critical), top and bottom 5 students by percentage, per-subject averages, monthly attendance trends, and a full individual student breakdown by subject.
+- **Defaulter detection** automatically surfaces every student below the 75% threshold with their exact percentage, so action can be taken without manually scanning records.
+- **Secure by default** — passwords are bcrypt-hashed at cost 12, sessions live in a signed HttpOnly cookie that expires after 8 hours, and every API route except login is protected by JWT middleware.
+- **Clean data model** — the `attendance` table uses a composite unique key on `(student_id, subject_id, attendance_date)`, so re-submitting a day's attendance is always safe (upsert, never duplicate).
+
+### Who it's for
+
+Faculty who need to mark and review attendance quickly, and administrators who need college-wide or department-level attendance reports without writing a single query.
+
+---
+
 ## 📌 Table of Contents
 
+- [About](#-about)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
